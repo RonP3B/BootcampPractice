@@ -1,0 +1,80 @@
+﻿@model SportShop.SportStore.OrderDetailReportData
+
+@if ((bool?)ViewData["Printing"] == true)
+{
+    Layout = MVC.Views.Shared._LayoutNoNavigation;
+}
+
+<section class="invoice">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                Order
+                <small class="pull-right">Date: @DateTime.Now.ToShortDateString()</small>
+            </h2>
+        </div>
+    </div>
+    <div class="row invoice-info">
+        <div class="col-sm-2 invoice-col">
+            From: <strong>Shop Store</strong>
+        </div>
+        <div class="col-sm-8 invoice-col">
+            To: <strong>@Model.Order.CustomerName</strong><br>
+            <address>
+                Address: @Model.Order.ShipAddress<br>
+                Phone: @Model.Order.CustomerPhone<br>
+                Email: @Model.Order.CustomerEmail
+            </address>
+        </div>
+        <div class="col-sm-2 invoice-col">
+            <b>Order ID:</b> @Model.Order.OrderId<br>
+            <b>Payment Due:</b> @Model.Order.OrderDate.Value.ToShortDateString()<br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>ITBIS</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model.Details)
+                    {
+                        <tr>
+                            <td>@d.ProductName</td>
+                            <td>@(d.ProductUnitPrice.ToStringDefault("#,##0.00"))</td>
+                            <td>@(d.ProductItbis.ToStringDefault("#,##0.00"))</td>
+                            <td>@(d.Quantity.ToStringDefault("#,##0"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row align-center">
+        <div class="col-xs-6">
+            @{
+                var totalPrice = Model.Details.Sum(x => x.TotalPrice ?? 0);
+                var totalItbis = Model.Details.Sum(x => x.TotalItbis ?? 0);
+            }
+
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th style="width:50%">Total Price:</th>
+                        <td>$@totalPrice.ToString("#,##0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Total ITBIS:</th>
+                        <td>$@((totalItbis).ToString("#,##0.00"))</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
